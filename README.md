@@ -8,6 +8,9 @@
 - In `index.html`, you have to set your own AWS AccessKeyId, AccessSecret and your own S3 bucket.   
 - In `Main.qml`, you should change the url which I have already comment to your own url.   
 - You need to have a Bubblegum-96 board and a 3D printer and I can help to setup the rest.  
+Bubblegum-96: [http://www.96boards.org/product/bubblegum-96/](http://www.96boards.org/product/bubblegum-96/)  
+3D printer: [http://ucrobotics.com](http://ucrobotics.com)  
+   
 ----  
 ## To start a client  
 You need a Ubuntu 16.04LTS first.  
