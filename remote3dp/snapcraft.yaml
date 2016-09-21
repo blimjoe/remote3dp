@@ -1,0 +1,26 @@
+name: remote3dprint
+version: 1
+summary: Remote 3D print
+description: clone written in pure QML. No C++ wrappers needed.
+confinement: strict
+
+apps:
+    Remote3DP:
+        command: bin/wrapper
+        plugs: [unity7, opengl, x11, browser-support, content, home]
+
+parts:
+    remote3dprint:
+        plugin: copy
+        files:
+            wrapper: bin/wrapper
+            Main.qml: Main.qml
+            ContentPickerDialog.qml: ContentPickerDialog.qml
+            MimeTypeMapper.js: MimeTypeMapper.js
+        stage-packages:
+            - ubuntu-sdk-libs  
+            - qtubuntu-desktop  
+            - qml-module-qtsysteminfo  
+            - qml-module-ubuntu-web  
+            - qml-module-qtquick-dialogs
+        after: [desktop-qt5]

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+export OXIDE_NO_SANDBOX=1
+desktop-launch $SNAP/usr/lib/*/qt5/bin/qmlscene $SNAP/Main.qml

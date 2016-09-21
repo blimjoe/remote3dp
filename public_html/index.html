@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en" class="no-js">
+
+<head>
+    <title>uC3DP Demo</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <style>
+        .chromeFrameInstallDefaultStyle {
+            margin-top: 10px;
+            width: 800px;
+            border: 5px solid blue;
+        }
+    </style>
+
+    <script src="js/Three.js"></script>
+    <script src="js/plane.js"></script>
+    <script src="js/thingiview.js"></script>
+    <script src="js/aws-sdk-2.5.5.min.js"></script>
+    <script src="js/STLLoader.js"></script>
+    <script src="js/Detector.js"></script>
+    <script src="js/stats.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+
+</head>
+
+<body>
+
+    <div id="prompt">
+        <!-- if IE without GCF, prompt goes here -->
+    </div>
+
+    <header>
+        <h1>Remote 3D print Demo</h1>
+    </header>
+
+    <div id="sidebar" style="float:right;width:40%"></div>
+
+    <p>
+        <input class="control_btn" type="button" value="Top" />
+        <input class="control_btn" type="button" value="Side" />
+        <input class="control_btn" type="button" value="Bottom" />
+        <input class="control_btn" type="button" value="Diagonal" />
+        <input class="control_btn" type="button" value="Zoom +" />
+        <input class="control_btn" type="button" value="Zoom -" />
+    </p>
+    <p>
+        Rotation: <input class="rotation_btn" type="button" value="on" /> | <input class="rotation_btn" type="button" value="off" />
+    </p>
+
+    <div id="viewer" style="width:400px;height:400px"></div>
+    <input id="file-chooser" type="file"/>
+    <button id="upload-button">Upload</button>
+    <div id="results"></div>
+    <p>
+        <input class="material_btn" type="button" value="Wireframe" />
+        <input class="material_btn" type="button" value="Solid" />
+    </p>
+
+    <p>
+        Plane: <a id="plane-hide" href="#">Hide</a> | <a id="plane-show" href="#">Show</a><br/>
+        Background Color: <input id="color-bg" type="color"><br/>
+        Object Color: <input id="color-obj" type="color"><br/>
+    </p>
+
+    <footer>
+        <p>This Demo is based on three.js / thingiview.js</p>
+    </footer>
+    <script>
+
+        AWS.config.update(
+//input your own accesskeyid
+            accessKeyId: '',
+//input your own secretaccesskey
+            secretAccessKey: ''
+        });
+
+        var thingiurlbase = "./js";
+        var thingiview;
+
+        $('document').ready(function() {
+            thingiview = new Thingiview("viewer");
+            thingiview.setObjectColor('#C0D8F0');
+            thingiview.initScene();
+
+            initEvents();
+        });
+
+        function initEvents() {
+
+            // Control bottom click event
+            $(".control_btn").click(function(e) {
+                var value = $(this).val();
+                switch ($(this).val()) {
+                    case 'Zoom +':
+                        thingiview.setCameraZoom(5);
+                        break;
+                    case 'Zoom -':
+                        thingiview.setCameraZoom(-5);
+                        break;
+                    default:
+                        thingiview.setCameraView(value.toLowerCase());
+                }
+            });
+
+            // Rotation button Event
+            $('.rotation_btn').click(function(e) {
+                var value = $(this).val();
+                if (value === 'on') {
+                    thingiview.setRotation(true);
+                } else if (value === 'off') {
+                    thingiview.setRotation(false);
+                }
+            });
+
+            // Set Object Material Event
+            $('.material_btn').click(function(e) {
+                var value = $(this).val();
+                if (value === 'Wireframe') {
+                    thingiview.setObjectMaterial('wireframe');
+                } else if (value === 'Solid') {
+                    thingiview.setObjectMaterial('solid');
+                }
+            });
+
+            // Plane
+            $('#plane-hide').click(function() {
+                thingiview.setShowPlane(false)
+            });
+            $('#plane-show').click(function() {
+                thingiview.setShowPlane(true)
+            });
+
+            // Color
+            $('#color-bg').change(function() {
+                thingiview.setBackgroundColor(this.value);
+            });
+            $('#color-obj').change(function() {
+                thingiview.setObjectColor(this.value);
+            });
+
+            // input file
+            $('#file-chooser').change(function() {
+                var file = $(this).val();
+
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(evt) {
+                        thingiview.loadSTLString(evt.target.result);
+                    }
+                    reader.readAsBinaryString(this.files[0]);
+                }
+            });
+
+            // upload button
+            $("#upload-button").click(function() {
+
+                var bucket = new AWS.S3({
+                    params: {
+//need update your own bucket
+                        Bucket: 'YOURBUCKET'
+                    }
+                });
+                var fileChooser = document.getElementById('file-chooser');
+                var results = document.getElementById('results');
+                var file = fileChooser.files[0];
+                if (file) {
+                    results.innerHTML = '';
+
+                    var params = {
+                        Key: "test",
+                        ContentType: file.type,
+                        Body: file
+                    };
+                    bucket.upload(params, function(err, data) {
+                        results.innerHTML = err ? 'ERROR!' : 'UPLOADED.';
+                    });
+                } else {
+                    results.innerHTML = 'Nothing to upload.';
+                }
+                var name = file.name;
+            });
+        }
+
+    </script>
+</body>
+
+</html>
