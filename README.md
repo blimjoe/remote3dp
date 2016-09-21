@@ -1,6 +1,8 @@
 # remote3dp  
-*It's a demo of remote control 3d printer finished on AWS Hackathon 2016 China. It's packaged by snapcraft, and it can be run on Ubuntu 16.04LTS.*  
-**Thanks DawnDIY for help**  
+*It's a demo of remote control 3d printer finished on AWS Hackathon 2016 China. It's packaged by snapcraft, and it can be run on Ubuntu 16.04LTS.*   
+
+#*Thanks DawnDIY for help*  
+    
 ## What you should do  
 - Find a server to locate `/public_html`    
 - In `index.html`, you have to set your own AWS AccessKeyId, AccessSecret and your own S3 bucket.   
